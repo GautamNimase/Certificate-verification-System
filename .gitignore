@@ -1,9 +1,28 @@
+# Dependencies
 node_modules/
-server/uploads/
+client/node_modules/
+server/node_modules/
+blockchain/node_modules/
+
+# Environment files
+.env
+*.env
+server/.env
+client/.env
+blockchain/.env
+
+# Build artifacts
+client/dist/
 blockchain/artifacts/
 blockchain/cache/
-client/dist/
-*.swp
-*.tmp
-.env
+
+# Runtime / logs / uploads
 *.log
+server/server.log
+server/uploads/
+
+# Editor/system files
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
