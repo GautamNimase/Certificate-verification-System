@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL + "/api";
 
 // Helper function to format date in DD MMM YYYY format
 const formatDate = (dateValue) => {

@@ -104,7 +104,8 @@ function StudentLogin() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/student/register', {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${API_URL}/api/student/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
