@@ -1,52 +1,61 @@
-# Wallet Connection Improvements TODO
+# Deployment TODO - Blockchain Certificate Verification System
 
-## Task
-Improve frontend wallet connection logic to handle:
-1. Remove auto-connect on page load
-2. Handle "wallet already linked" error properly
-3. Show clear error messages to users
-4. Add helper UI messages
+## Status Legend
+- [ ] **Not Started**
+- [x] **Completed**
+- [!] **Blocked** (needs user input)
 
-## Files to Edit
+## 1. Setup Requirements (User Actions)
+- [*] MetaMask: Install → Add Sepolia → Fund with test ETH (sepoliafaucet.com)
+- [*] Export PRIVATE_KEY from MetaMask (Account Details → Export Private Key)
+- [*] Pinata: Create account → API Keys → JWT or API Key/Secret
+- [*] Alchemy/Infura: Free Sepolia RPC URL (optional, public RPC works)
+- [ ] Railway.app: Sign up (MySQL DB)
+- [ ] Render.com: Sign up (Backend)
+- [ ] Vercel.com: Sign up (Frontend) → Connect GitHub repo?
 
-### 1. client/src/App.jsx
-- [x] Remove auto-connect on page load
-- [x] Add proper error handling for wallet connection
-- [x] Modify connectWallet to return error messages
-- [x] Add isConnecting state
+## 2. Deploy Smart Contract to Sepolia
+- [ ] Create `blockchain/.env`:
+```
+PRIVATE_KEY=0x_your_deployer_private_key_here
+```
+- [ ] cd e:/New Project/blockchain && npm install
+- [ ] npx hardhat run scripts/deploy.js --network sepolia
+- [ ] Copy output CONTRACT_ADDRESS
+- [ ] Note: ABI already in server/config/blockchain.js
 
-### 2. client/src/components/WalletConnect.jsx
-- [x] Add helper UI message for MetaMask account selection
-- [x] Add error message display area
-- [x] Add isConnecting prop handling
+## 3. Setup Database (Railway MySQL)
+- [ ] Railway → New Project → Database → MySQL
+- [ ] Connect → Copy connection vars: HOST, PORT, DB, USER, PASS
+- [ ] **Add to server/.env: DB_SSL=true** (enables SSL, default)
+- [ ] Railway → Data tab → Query → Paste database/schema.sql → Run
 
-### 3. client/src/pages/AuthPage.jsx
-- [x] Handle wallet connection errors properly
-- [x] Pass error state to WalletConnect component
+## 4. Backend Configuration & Deploy (Render)
+- [ ] Create `server/.env` (see below)
+- [ ] Update CORS in server/index.js
+- [ ] Render → New Service → Web → GitHub repo → Build: none, Start: npm start
+- [ ] Add all server/.env vars to Render Dashboard
 
-### 4. client/src/pages/StudentLogin.jsx
-- [x] Handle "wallet already linked" error
-- [x] Show clear error message to user
-- [x] Add helper message for MetaMask account selection
-- [x] Add loading state during connection
+## 5. Frontend Configuration & Deploy (Vercel)
+- [ ] Create `client/.env` (see below)
+- [ ] Update client/src/App.jsx (API_URL → env var)
+- [ ] Vercel → Import GitHub repo → Deploy → Add env vars
 
-### 5. client/src/pages/Login.jsx
-- [x] Handle wallet connection errors properly
-- [x] Add helper message for MetaMask account selection
-- [x] Add loading state during connection
+## 6. Testing Checklist
+- [ ] Backend health: https://your-backend.onrender.com/api/health
+- [ ] No CORS errors in browser console
+- [ ] Database: Login with admin@university.com / Admin@123
+- [ ] MetaMask: Sepolia network, connect works
+- [ ] IPFS: Admin → Issue certificate → Check Pinata dashboard
+- [ ] Blockchain: Verify on Sepolia Etherscan
 
-## Implementation Order
-1. App.jsx - Core logic changes (COMPLETED)
-2. WalletConnect.jsx - UI improvements (COMPLETED)
-3. AuthPage.jsx - Error handling (COMPLETED)
-4. StudentLogin.jsx - Error handling (COMPLETED)
-5. Login.jsx - Error handling (COMPLETED)
+## 7. Multi-PC Verification
+- [ ] Test frontend public URL on phone/PC 2
+- [ ] All flows: Login → Issue → Verify certificate
 
-## Summary
-All improvements have been implemented:
-1. ✅ Removed auto-connect on page load
-2. ✅ Added proper error handling for "wallet already linked" scenario
-3. ✅ Clear error message: "This wallet is already linked to another user. Please switch your MetaMask account."
-4. ✅ Helper UI message telling users to switch MetaMask accounts before connecting
-5. ✅ User clicks "Connect Wallet" → Then MetaMask connects (manual connection flow)
+## Blocked/Notes
+- Waiting for user to provide: PRIVATE_KEY, Pinata JWT, hosting accounts
 
+**Next Step: User completes #1 → I execute #2 (contract deploy needs PRIVATE_KEY)**
+
+Updated: After each step completion, mark [x] and run `git add . && git commit -m "Complete step X"` (optional).

@@ -24,7 +24,8 @@ const sequelize = new Sequelize(
         },
         // MySQL specific options
         dialectOptions: {
-            charset: 'utf8mb4'
+            charset: 'utf8mb4',
+            ssl: process.env.DB_SSL === 'false' ? undefined : { rejectUnauthorized: false }
         }
     }
 );

@@ -62,14 +62,7 @@ app.use(cors({
     origin: function(origin, callback) {
         // Allow requests with no origin (like mobile apps or curl requests)
         // Also allow localhost development ports
-        const allowedOrigins = [
-            'http://localhost:5173', 
-            'http://localhost:5175',
-            'http://localhost:5176',
-            'http://127.0.0.1:5173',
-            'http://127.0.0.1:5175',
-            'http://127.0.0.1:5176'
-        ];
+const allowedOrigins = (process.env.FRONTEND_URLS || 'http://localhost:5173,http://localhost:3000').split(',').map(url => url.trim());
         
         if(!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
