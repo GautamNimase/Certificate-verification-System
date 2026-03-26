@@ -3,6 +3,11 @@ const { User } = require('../models');
 
 // Generate JWT token
 const generateToken = (user) => {
+    if (!process.env.JWT_SECRET) {
+        const err = new Error('Server misconfigured: JWT_SECRET is not set');
+        err.statusCode = 500;
+        throw err;
+    }
     return jwt.sign(
         {
             id: user.id,
@@ -64,11 +69,30 @@ exports.register = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Register Error:', error.message);
-        res.status(500).json({
+        const status = error.statusCode || 500;
+        const detail = error?.original?.message || error.message;
+        console.error('Register Error:', detail);
+
+        // Sequelize common cases
+        if (error?.name === 'SequelizeUniqueConstraintError') {
+            return res.status(400).json({
+                success: false,
+                message: 'A user with this email or wallet address already exists',
+                error: detail
+            });
+        }
+        if (error?.name === 'SequelizeValidationError') {
+            return res.status(400).json({
+                success: false,
+                message: 'Validation error',
+                errors: error.errors?.map((e) => ({ field: e.path, message: e.message })) || [],
+            });
+        }
+
+        res.status(status).json({
             success: false,
             message: 'Error registering user',
-            error: error.message
+            error: detail
         });
     }
 };
@@ -119,11 +143,13 @@ exports.login = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Login Error:', error.message);
-        res.status(500).json({
+        const status = error.statusCode || 500;
+        const detail = error?.original?.message || error.message;
+        console.error('Login Error:', detail);
+        res.status(status).json({
             success: false,
             message: 'Error logging in',
-            error: error.message
+            error: detail
         });
     }
 };
