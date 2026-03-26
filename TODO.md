@@ -10,9 +10,9 @@
 - [*] Export PRIVATE_KEY from MetaMask (Account Details → Export Private Key)
 - [*] Pinata: Create account → API Keys → JWT or API Key/Secret
 - [*] Alchemy/Infura: Free Sepolia RPC URL (optional, public RPC works)
-- [ ] Railway.app: Sign up (MySQL DB)
-- [ ] Render.com: Sign up (Backend)
-- [ ] Vercel.com: Sign up (Frontend) → Connect GitHub repo?
+- [*] Railway.app: Sign up (MySQL DB)
+- [*] Render.com: Sign up (Backend)
+- [*] Vercel.com: Sign up (Frontend) → Connect GitHub repo?
 
 ## 2. Deploy Smart Contract to Sepolia
 - [ ] Create `blockchain/.env`:

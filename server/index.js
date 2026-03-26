@@ -58,20 +58,34 @@ const loginLimiter = rateLimit({
 });
 
 // Middleware
+
+const allowedOrigins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://certificate-verification-system1.vercel.app"
+];
+
 app.use(cors({
-    origin: function(origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        // Also allow localhost development ports
-const allowedOrigins = (process.env.FRONTEND_URLS || 'http://localhost:5173,http://localhost:3000').split(',').map(url => url.trim());
-        
-        if(!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
         } else {
-            callback(new Error('Not allowed by CORS'));
+            console.log("Blocked by CORS:", origin);
+            return callback(new Error("Not allowed by CORS"));
         }
     },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true
 }));
+
+// 🔥 VERY IMPORTANT (handle preflight)
+app.options('*', cors({
+    origin: allowedOrigins,
+    credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
