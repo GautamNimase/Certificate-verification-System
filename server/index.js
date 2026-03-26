@@ -58,33 +58,44 @@ const loginLimiter = rateLimit({
 });
 
 // Middleware
-
-const allowedOrigins = [
+// CORS needs to succeed for Vercel preflight requests (OPTIONS).
+// Prefer explicit allow-list via FRONTEND_URLS, but fall back to allowing any *.vercel.app during setup.
+const defaultAllowedOrigins = [
     "http://localhost:5173",
     "http://localhost:3000",
-    "https://certificate-verification-system1.vercel.app"
+    "https://certificate-verification-system1.vercel.app",
+    "https://certificate-verification-system.vercel.app"
 ];
 
-app.use(cors({
+const allowedOrigins = process.env.FRONTEND_URLS
+    ? process.env.FRONTEND_URLS.split(',').map((u) => u.trim()).filter(Boolean)
+    : defaultAllowedOrigins;
+
+const corsOptions = {
     origin: function (origin, callback) {
         if (!origin) return callback(null, true);
 
         if (allowedOrigins.includes(origin)) {
             return callback(null, true);
-        } else {
-            console.log("Blocked by CORS:", origin);
-            return callback(new Error("Not allowed by CORS"));
         }
+
+        // Setup-friendly fallback: allow any Vercel preview/domain.
+        if (!process.env.FRONTEND_URLS && origin.endsWith('.vercel.app')) {
+            return callback(null, true);
+        }
+
+        console.log("Blocked by CORS:", origin);
+        return callback(null, false);
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true
-}));
+    credentials: true,
+    optionsSuccessStatus: 204
+};
 
-// 🔥 VERY IMPORTANT (handle preflight)
-app.options('*', cors({
-    origin: allowedOrigins,
-    credentials: true
-}));
+app.use(cors(corsOptions));
+
+// ✅ IMPORTANT: use SAME options here
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
