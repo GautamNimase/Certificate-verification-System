@@ -24,15 +24,25 @@ const baseOptions = {
 
 // Create Sequelize instance for MySQL database
 // Supports either DATABASE_URL or split DB_* variables.
+const requiredDbVars = ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD'];
+const missingDbVars = requiredDbVars.filter((key) => !process.env[key]);
+
+if (!process.env.DATABASE_URL && missingDbVars.length > 0) {
+    throw new Error(
+        `Missing required database environment variables: ${missingDbVars.join(', ')}. ` +
+        'Set DATABASE_URL or all DB_* variables.'
+    );
+}
+
 const sequelize = process.env.DATABASE_URL
     ? new Sequelize(process.env.DATABASE_URL, baseOptions)
     : new Sequelize(
-        process.env.DB_NAME || 'certificate_verification',
-        process.env.DB_USER || 'root',
-        process.env.DB_PASSWORD || 'root',
+        process.env.DB_NAME,
+        process.env.DB_USER,
+        process.env.DB_PASSWORD,
         {
-            host: process.env.DB_HOST || 'localhost',
-            port: process.env.DB_PORT || 3306,
+            host: process.env.DB_HOST,
+            port: Number(process.env.DB_PORT),
             ...baseOptions
         }
     );
@@ -43,8 +53,8 @@ const testConnection = async () => {
         await sequelize.authenticate();
         console.log('✅ Database connection established successfully.');
     } catch (error) {
-        const host = process.env.DB_HOST || 'localhost';
-        const port = process.env.DB_PORT || 3306;
+        const host = process.env.DB_HOST || '(from DATABASE_URL)';
+        const port = process.env.DB_PORT || '(from DATABASE_URL)';
         const dbName = process.env.DB_NAME || '(from DATABASE_URL)';
         const user = process.env.DB_USER || '(from DATABASE_URL)';
         const detail = error?.original?.message || error?.message || String(error);
