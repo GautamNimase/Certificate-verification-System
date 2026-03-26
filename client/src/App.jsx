@@ -15,7 +15,11 @@ import VerifyCertificate from './pages/VerifyCertificate';
 export const AuthContext = createContext(null);
 
 // API Base URL
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Accepts either:
+// - VITE_API_URL="https://host"       -> we append "/api"
+// - VITE_API_URL="https://host/api"  -> use as-is
+const API_URL_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = API_URL_BASE.endsWith('/api') ? API_URL_BASE : `${API_URL_BASE.replace(/\/$/, '')}/api`;
 
 function App() {
   const [user, setUser] = useState(null);
