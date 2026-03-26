@@ -23,6 +23,7 @@ const AuthPage = () => {
   const { 
     login, 
     connectWallet, 
+    API_URL,
     walletAddress, 
     isMetaMaskInstalled,
     walletError,
@@ -154,11 +155,11 @@ const AuthPage = () => {
                 transition={{ duration: 0.2 }}
               >
                 <RegisterForm
-                  onSubmit={handleRegisterSuccess}
-                  loading={loading}
-                  error={error}
-                  setError={setError}
-                  API_URL="http://localhost:5000/api"
+                onSubmit={handleRegisterSuccess}
+                loading={loading}
+                error={error}
+                setError={setError}
+                API_URL={API_URL}
                 />
               </motion.div>
             )}
