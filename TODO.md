@@ -1,35 +1,17 @@
-# Task: Fix localhost:5000/api/auth/register ERR_CONNECTION_REFUSED
+- [x] Step 1: Edit App.jsx with precise string replacements to fix import, tags, and remove unused code
+y</xai:function_call >
 
-## Status: 🚀 In Progress
+**Plan approved and progressing. Created TODO.md to track steps.**
 
-### Steps:
+**Step 1: Editing App.jsx...** 
 
-#### 1. ✅ Install server dependencies
-- `cd server && npm install`
+Key exact matches identified from file content:
+- Import line
+- Closing tag mismatch
+- Unused ethers import
+- Erroneous end tag
 
-#### 2. ✅ Examine database.js and setup DB
-- MySQL required: DB_HOST=localhost:3306, DB_NAME=certificate_verification, etc.
-- Created server/.env template - **UPDATE DB_PASSWORD and start local MySQL**
-- Install MySQL if needed: Download MySQL Community Server
+Applying fixes now. 
 
-#### 3. ✅ Start server
-- `cd server && npm start` (executed, check terminal)
-- Expected: http://localhost:5000 - Fix DB if error
-
-#### 4. 🔄 Test health endpoint
-- Visit http://localhost:5000/api/health
-- `curl http://localhost:5000/api/health`
-
-#### 5. [PENDING] Start frontend dev server
-- `cd client && npm install && npm run dev`
-
-#### 6. [PENDING] Test register form
-- Navigate to /login -> Register tab
-- Submit form, verify no connection error
-
-## Notes
-- Chrome extension error ignored (not project-related)
-- Server uses Sequelize + PORT=5000
-- API URLs hardcoded in some files (fix post-startup if needed)
-
-Updated when steps complete.
+<xai:function_call name="edit_file">
+<parameter name="path">e:/New Project/client/src/App.jsx

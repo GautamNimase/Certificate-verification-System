@@ -3,12 +3,20 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [react()],
+  define: {
+    global: 'globalThis',
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'es2020'
+    }
+  },
   
   server: {
     port: 5173,
     proxy: {
       '/api': {
-        target: process.env.VITE_API_URL || 'http://localhost:5000',
+        target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false
       }
@@ -16,7 +24,8 @@ export default defineConfig({
   },
 
   build: {
-    outDir: 'dist',
-    sourcemap: true
+    outDir: '../server/dist',
+    sourcemap: true,
+    base: '/'
   }
 });

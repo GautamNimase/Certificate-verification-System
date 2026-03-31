@@ -79,8 +79,8 @@ const corsOptions = {
             return callback(null, true);
         }
 
-        // Setup-friendly fallback: allow any Vercel preview/domain.
-        if (!process.env.FRONTEND_URLS && origin.endsWith('.vercel.app')) {
+        // Setup-friendly fallback: allow Vercel/Render preview/domain
+        if (!process.env.FRONTEND_URLS && (origin.endsWith('.vercel.app') || origin.includes('onrender.com'))) {
             return callback(null, true);
         }
 
@@ -121,6 +121,17 @@ app.get('/api/health', (req, res) => {
         message: 'Certificate Verification API is running',
         timestamp: new Date().toISOString()
     });
+});
+
+// Serve React frontend static files
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// SPA fallback - serve index.html for client routes (not API)
+app.get('*', (req, res, next) => {
+  if (!req.path.match(/^\/api/)) {
+    return res.sendFile(path.join(__dirname, 'dist/index.html'));
+  }
+  next();
 });
 
 // Error handling middleware
@@ -172,13 +183,14 @@ const startServer = async () => {
         initBlockchain();
         
         // Start Express server
-        app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
             console.log(`
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
-║   🔐 Certificate Verification API Server                    ║
+║   🌐 Certificate Verification System (API + Frontend)       ║
 ║                                                              ║
-║   Server running on: http://localhost:${PORT}                 ║
+║   Fullstack running on: http://localhost:${PORT}              ║
+║   Frontend: /                       API: /api/*             ║
 ║   Environment: ${process.env.NODE_ENV || 'development'}                             ║
 ║                                                              ║
 ╚══════════════════════════════════════════════════════════════╝

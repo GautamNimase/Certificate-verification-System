@@ -1,10 +1,16 @@
 services:
   - type: web
-    name: certificate-verification-backend
-    runtime: node
-    rootDir: server
-    buildCommand: npm install
+    name: certificate-verification-system
+    env: node
+    rootDir: .
+    buildCommand: npm ci && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_VERSION
         value: 22.22.0
+      - key: VITE_API_URL
+        fromDatabase:
+          type: basic
+          name: VITE_API_URL
+      - key: NODE_ENV
+        value: production

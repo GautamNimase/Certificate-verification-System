@@ -1,6 +1,6 @@
-import { ethers } from 'ethers';
+
 import { createContext, useEffect, useState } from 'react';
-import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 // Import pages
 import AdminDashboard from './pages/AdminDashboard';
@@ -18,15 +18,14 @@ export const AuthContext = createContext(null);
 // Accepts either:
 // - VITE_API_URL="https://host"       -> we append "/api"
 // - VITE_API_URL="https://host/api"  -> use as-is
-const API_URL_BASE = import.meta.env.VITE_API_URL;
+const API_URL_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
 
-if (!API_URL_BASE) {
-  throw new Error("VITE_API_URL is not defined. Please check Vercel environment variables.");
+if (import.meta.env.PROD && !API_URL_BASE) {
+  throw new Error("VITE_API_URL is not defined. Please set for production.");
 }
 
-const API_URL = API_URL_BASE.endsWith('/api')
-  ? API_URL_BASE
-  : `${API_URL_BASE.replace(/\/$/, '')}/api`;
+const API_URL = import.meta.env.DEV ? '/api' : 
+  (API_URL_BASE.endsWith('/api') ? API_URL_BASE : `${API_URL_BASE.replace(/\/$/, '')}/api`);
 
 function App() {
   const [user, setUser] = useState(null);
@@ -110,6 +109,7 @@ function App() {
     }
 
     try {
+      const { ethers } = await import('ethers');
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
@@ -240,7 +240,7 @@ function App() {
       getToken,
       API_URL
     }}>
-      <Router>
+<BrowserRouter>
         <Routes>
           <Route path="/login" element={!user ? <AuthPage /> : <Navigate to="/" />} />
           <Route path="/student-login" element={!user ? <StudentLogin /> : <Navigate to="/student" />} />
@@ -269,10 +269,11 @@ function App() {
             user && user.role === 'verifier' ? <VerifierDashboard /> : <Navigate to="/login" />
           } />
         </Routes>
-      </Router>
+      </BrowserRouter>
     </AuthContext.Provider>
   );
 }
 
 export default App;
+
 
